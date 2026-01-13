@@ -6,6 +6,13 @@ plugins {
     alias(libs.plugins.composeMultiplatform) apply false
     alias(libs.plugins.composeCompiler) apply false
     alias(libs.plugins.kotlinMultiplatform) apply false
-    id("java")  //   // **ADDED**  -- but should not be needed because "android" is applied and supposed to be allowed
-    id("com.google.protobuf") version "0.9.5"  //   // **ADDED**
+    id("java")
+    id("com.google.protobuf") version "0.9.5"
+}
+
+allprojects {
+    tasks.withType<JavaCompile>().configureEach {
+        sourceCompatibility = JavaVersion.VERSION_11.toString()
+        targetCompatibility = JavaVersion.VERSION_11.toString()
+    }
 }
