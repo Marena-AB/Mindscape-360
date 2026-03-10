@@ -3,6 +3,9 @@ package edu.moravian.cardboard.util
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import kotlinx.cinterop.ExperimentalForeignApi
+import platform.AVFAudio.AVAudioSession
+import platform.AVFAudio.AVAudioSessionCategoryPlayback
+import platform.AVFAudio.setActive
 import platform.AVFoundation.*
 import platform.CoreMedia.CMTimeMake
 import platform.Foundation.NSURL
@@ -47,6 +50,15 @@ class IosMediaPlayer(
 
     @OptIn(ExperimentalForeignApi::class)
     override fun load(url: String, repeat: Boolean) {
+        // Force audio even when device is on silent
+        val audioSession = AVAudioSession.sharedInstance()
+        try {
+            audioSession.setCategory(AVAudioSessionCategoryPlayback, error = null)
+            audioSession.setActive(true, error = null)
+        } catch (e: Exception) {
+            println("Failed to configure audio session: ${e.message}")
+        }
+
         val nsUrl = NSURL.URLWithString(url) ?: throw IllegalArgumentException("Invalid URL: $url")
         item = AVPlayerItem.playerItemWithURL(nsUrl)
         autostart = false
